@@ -18,6 +18,8 @@ app.use(
 app.use(cookieParser());
 app.use(express.json());
 
+app.use("/api", require("./routes/orderRoutes"));
+
 connectionDb()
   .then(() => {
     app.listen(PORT, () => {
