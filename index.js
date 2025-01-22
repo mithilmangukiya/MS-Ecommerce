@@ -3,6 +3,7 @@ const dotenv = require("dotenv");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const connectionDb=require("./db/MongoDB")
+const cartRoutes = require('./routes/cartRoutes.js');
 
 dotenv.config();
 const app = express();
@@ -17,6 +18,8 @@ app.use(
 );
 app.use(cookieParser());
 app.use(express.json());
+
+app.use('/api/cart', cartRoutes);
 
 connectionDb()
   .then(() => {
