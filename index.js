@@ -3,6 +3,7 @@ const dotenv = require("dotenv");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const connectionDb=require("./db/MongoDB")
+const categoryRoutes = require("./routes/Category_Routes") 
 
 dotenv.config();
 const app = express();
@@ -17,6 +18,9 @@ app.use(
 );
 app.use(cookieParser());
 app.use(express.json());
+
+
+app.use("/api/category", categoryRoutes)
 
 connectionDb()
   .then(() => {
