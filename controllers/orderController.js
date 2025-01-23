@@ -1,8 +1,15 @@
-const Order = require('../models/orderModel');
-const sendEmail = require('../utils/email');
+const Order = require('../models/orderModel'); 
+const sendEmail = require('../utils/email'); 
 
 const createOrder = async (req, res) => {
-    const { userId, products, totalAmount, shippingAddress } = req.body;
+    const { products, totalAmount, shippingAddress } = req.body;
+    const userId = req.user._id;
+    // const {userId} = req.params;
+    if (!userId) {
+        return res.status(400).json({ message: "User ID is required." });
+    }
+
+    
 
     try {
         const newOrder = new Order({ userId, products, totalAmount, shippingAddress });
@@ -37,13 +44,14 @@ const createOrder = async (req, res) => {
         res.status(201).json({ message: "Order created successfully", newOrder });
     }
     catch (error) {
+        console.error("Order creation failed:", error); 
         res.status(500).json({ message: "Order creation failed", error });
     }
 }
 
 const getAllOrders = async (req, res) => {
     try {
-        const orders = await Order.find();
+        const orders = await Order.find().populate('userId', 'username email').populate('products.productId');
         res.status(200).json({ message: "All orders", orders });
     }
     catch (error) {
@@ -55,7 +63,7 @@ const getOrderById = async (req, res) => {
     const { id } = req.params;
 
     try {
-        const order = await Order.findById(id);
+        const order = await Order.findById(id).populate('userId', 'username email').populate('products.productId');
         res.status(200).json({ message: "Order found", order });
     }
     catch (error) {
@@ -67,7 +75,7 @@ const getMyOrders = async (req, res) => {
     const { userId } = req.params;
 
     try {
-        const orders = await Order.find({ userId });
+        const orders = await Order.find({ userId }).populate('products.productId');
         res.status(200).json({ message: "My orders", orders });
     }
     catch (error) {
