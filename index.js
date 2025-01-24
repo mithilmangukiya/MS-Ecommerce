@@ -6,7 +6,7 @@ const connectionDb=require("./db/MongoDB");
 const userRoutes = require("./routes/userRoute");
 const roleRoutes = require("./routes/roleRoutes");
 const passwordRoutes = require("./routes/passwordRoutes");
-
+const categoryRoutes = require("./routes/Category_Routes") 
 
 dotenv.config();
 const app = express();
@@ -26,6 +26,8 @@ app.use("/api", require("./routes/orderRoutes"));
 app.use('/api/user', userRoutes);
 app.use('/api/role', roleRoutes);
 app.use('/api/auth', passwordRoutes);
+
+app.use("/api/category", categoryRoutes)
 
 connectionDb()
   .then(() => {
