@@ -8,6 +8,9 @@ const roleRoutes = require("./routes/roleRoutes");
 const passwordRoutes = require("./routes/passwordRoutes");
 const categoryRoutes = require("./routes/Category_Routes") 
 
+const productRouter = require('./routes/productRouter')
+
+
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -28,6 +31,10 @@ app.use('/api/role', roleRoutes);
 app.use('/api/auth', passwordRoutes);
 
 app.use("/api/category", categoryRoutes)
+app.use(express.urlencoded({ extended: true }));
+
+
+app.use("/product" , productRouter)
 
 connectionDb()
   .then(() => {
