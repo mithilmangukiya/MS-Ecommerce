@@ -7,9 +7,8 @@ const userRoutes = require("./routes/userRoute");
 const roleRoutes = require("./routes/roleRoutes");
 const passwordRoutes = require("./routes/passwordRoutes");
 const categoryRoutes = require("./routes/Category_Routes") 
-
 const productRouter = require('./routes/productRouter')
-
+const wishlist = require('./routes/wishlistRoutes')
 
 dotenv.config();
 const app = express();
@@ -24,16 +23,14 @@ app.use(
 );
 app.use(cookieParser());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
+app.use('/api', wishlist)
 app.use("/api", require("./routes/orderRoutes"));
 app.use('/api/user', userRoutes);
 app.use('/api/role', roleRoutes);
 app.use('/api/auth', passwordRoutes);
-
 app.use("/api/category", categoryRoutes)
-app.use(express.urlencoded({ extended: true }));
-
-
 app.use("/product" , productRouter)
 
 connectionDb()

@@ -20,7 +20,7 @@ const categorySchema = new mongoose.Schema({
   },
   // parentCategory: {
   //   type: mongoose.Schema.Types.ObjectId,
-  //   ref: 
+  //   ref: 'Product',        
   //   default: null,
   // },
   status: {
