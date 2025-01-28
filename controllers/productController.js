@@ -41,9 +41,6 @@ const axios = require('axios');
 // };
 
 
-
-
-
 const productAdd = async (req, res) => {
   try {
     const { name, description, price, category, stockQuantity } = req.body;
@@ -109,7 +106,6 @@ const productDelete =  async (req, res) => {
       res.status(500).send('Error occurred while deleting the product ❌'); 
     }
   };
-
 
 
 // const productUpdate = async (req, res) => {
@@ -195,7 +191,6 @@ const productUpdate = async (req, res) => {
 };
 
 
-
 // const showSingleProduct = async (req, res) => {
 //   try {
 //     const productId = req.body.id;
@@ -216,8 +211,6 @@ const productUpdate = async (req, res) => {
 //     res.status(500).send('Error occurred while getting the product ❌');
 //   }
 // };
-
-
 
 
 const showSingleProduct = async (req, res) => {
@@ -244,7 +237,6 @@ const showSingleProduct = async (req, res) => {
     res.status(500).send('Error occurred while getting the product ❌');
   }
 };
-
 
 
 // const showAllProducts = async (req, res) => {
@@ -274,7 +266,7 @@ const showAllProducts = async (req, res) => {
   try {
     console.log("Fetching all products...");
 
-    const products = await productModel.find(); // Fetch all products
+    const products = await productModel.find(); 
 
     console.log(`Total products found: ${products.length}`);
 
@@ -282,26 +274,19 @@ const showAllProducts = async (req, res) => {
       return res.status(404).send('No products found.');
     }
 
-    // Map through the products to include the image URL
+   
     const productsWithImages = products.map(product => {
       return {
         ...product.toObject(),
-        imageUrl: product.images // This includes the image URL that you stored in 'images'
+        imageUrl: product.images
       };
     });
 
-    res.send(productsWithImages); // Send all products including the image URLs
+    res.send(productsWithImages);
   } catch (error) {
     console.error("Error occurred while fetching products:", error.message);
     res.status(500).send('Error occurred while getting products ❌');
   }
 };
-
-
-
-
-
-
-
 
 module.exports = {productAdd , productDelete , productUpdate, showSingleProduct , showAllProducts }
