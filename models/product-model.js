@@ -30,8 +30,8 @@ const productSchema = new mongoose.Schema({
   },
   attributes: [{
     key: String,
-    value: String
-  }],
+    value: String,
+   }],
   createdAt: {
     type: Date,
     default: Date.now,

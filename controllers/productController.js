@@ -90,13 +90,6 @@ const productAdd = async (req, res) => {
 };
 
 
-
-
-
-
-
-
-
 const productDelete =  async (req, res) => {
     try {
       const productId = req.body.id;  
@@ -254,27 +247,61 @@ const showSingleProduct = async (req, res) => {
 
 
 
-// const showproduct = async (req, res) => {
+// const showAllProducts = async (req, res) => {
 //   try {
-//     const products = await productModel.find();
-//     res.send(products);
+//     // Log a message to debug
+//     console.log("Fetching all products...");
+    
+//     const products = await productModel.find(); // Fetch all products
+//       //  const products = await productModel.find({}, { images: 0 }); // Exclude image field
+
+
+//     // Debugging the result count
+//     console.log(`Total products found: ${products.length}`);
+
+//     if (!products || products.length === 0) {
+//       return res.status(404).send('No products found.');
+//     }
+
+//     res.send(products); // Send all products
 //   } catch (error) {
-//     console.log(error.message);
+//     console.error("Error occurred while fetching products:", error.message);
 //     res.status(500).send('Error occurred while getting products ❌');
 //   }
 // };
 
-
-
-const showAllproduct = async (req, res) => {
+const showAllProducts = async (req, res) => {
   try {
-    const products = await productModel.find();  // This fetches all the products
-    res.send(products);  // Sends the products as the response
+    console.log("Fetching all products...");
+
+    const products = await productModel.find(); // Fetch all products
+
+    console.log(`Total products found: ${products.length}`);
+
+    if (!products || products.length === 0) {
+      return res.status(404).send('No products found.');
+    }
+
+    // Map through the products to include the image URL
+    const productsWithImages = products.map(product => {
+      return {
+        ...product.toObject(),
+        imageUrl: product.images // This includes the image URL that you stored in 'images'
+      };
+    });
+
+    res.send(productsWithImages); // Send all products including the image URLs
   } catch (error) {
-    console.log(error.message);
+    console.error("Error occurred while fetching products:", error.message);
     res.status(500).send('Error occurred while getting products ❌');
   }
 };
 
 
-module.exports = {productAdd , productDelete , productUpdate, showSingleProduct , showAllproduct }
+
+
+
+
+
+
+module.exports = {productAdd , productDelete , productUpdate, showSingleProduct , showAllProducts }

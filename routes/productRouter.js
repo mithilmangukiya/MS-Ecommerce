@@ -2,7 +2,7 @@ const express = require("express")
 const router = express.Router()
 const upload = require('../middleware/multer-config')
 const productModel = require('../models/product-model')
-const {productAdd, productDelete, productUpdate, showSingleProduct , showAllproduct} = require('../controllers/productController')
+const {productAdd, productDelete, productUpdate, showSingleProduct , showAllProducts} = require('../controllers/productController')
 
 
 router.post('/productAdd',  upload.single('images') , productAdd)
@@ -19,7 +19,7 @@ router.post('/productUpdate', upload.single('images'), productUpdate)
 
 router.get('/showSingleProduct/:id', showSingleProduct)
 
-router.get('/showAllProducts', showAllproduct)
+router.get('/showAllProducts', showAllProducts)
 
 
 
