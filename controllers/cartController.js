@@ -1,22 +1,25 @@
 const Cart = require('../models/cart.js');
-const Product = require('../models/product.js');
+const Product = require('../models/product-model.js');
 
 // Add to Cart
 exports.addToCart = async (req, res) => {
-    const { userId, productId, quantity } = req.body;
+    const {  productId, quantity } = req.body;
+    const userId = req.user._id;
+
 
     try {
         // Validate Product
         const product = await Product.findById(productId);
         if (!product) return res.status(404).json({ message: 'Product not found' });
 
-        if (product.stock < quantity)
+        if (product.stock < quantity)  
             return res.status(400).json({ message: 'Insufficient stock' });
 
         // Find or Create Cart
         let cart = await Cart.findOne({ userId });
         if (!cart) cart = new Cart({ userId, items: [] });
 
+        
         // Update or Add Item
         const itemIndex = cart.items.findIndex((item) => item.productId.toString() === productId);
         if (itemIndex > -1) {
