@@ -1,44 +1,75 @@
 const upload = require('../middleware/multer-config')
 const productModel = require('../models/product-model')
 const categoryModel = require('../models/Category_Model')
+const FormData = require('form-data'); 
+const axios = require('axios');
+
+
+// Merge Product or Category
 
 
 
+// const productAdd = async (req, res) => {
+//   try {
+    
+//     const { name, description, price, category, stockQuantity } = req.body;
 
-// const productAdd = async(req, res) => {
+   
+//     const categoryExists = await categoryModel.findById(category);
+//     if (!categoryExists) {
+//       return res.status(400).send('Invalid category ID. Category does not exist.');
+//     }
 
-// try {
+   
+//     const product = await productModel.create({
+//       name,
+//       description,
+//       price,
+//       category: categoryExists._id, 
+//       stockQuantity,
+//       images: req.file ? req.file.buffer : null, 
 
-//     let {name , description , price , category , stockQuantity} = req.body
-
-
-//         const product = await productModel.create({
-//         name , 
-//         description , 
-//         price ,
-//         category ,
-//         stockQuantity,
-//         images : req.file.buffer
-//     })
-
-//     res.send(`Product ADDED✅ ${product}`);
      
+//     });
 
 
-// } catch (error) {
-//     console.log(error.message)
-// }
-// }
+//     res.status(201).send(`Product added successfully: ${product}`);
+//   } catch (error) {
+//     console.error(error.message);
+//     res.status(500).send('An error occurred while adding the product.');
+//   }
+// };
+
+
+
+
 
 const productAdd = async (req, res) => {
   try {
-    
     const { name, description, price, category, stockQuantity } = req.body;
 
-   
+
     const categoryExists = await categoryModel.findById(category);
     if (!categoryExists) {
       return res.status(400).send('Invalid category ID. Category does not exist.');
+    }
+
+    let imageUrl = null;
+
+    
+    if (req.file) {
+      const imgBBKey = process.env.Img_bb; 
+
+   
+      const formData = new FormData();
+      formData.append('image', req.file.buffer.toString('base64')); 
+
+      const imgBBResponse = await axios.post(`https://api.imgbb.com/1/upload?key=${imgBBKey}`, formData, {
+        headers: formData.getHeaders(), 
+      });
+
+     
+      imageUrl = imgBBResponse.data.data.url;
     }
 
    
@@ -46,20 +77,24 @@ const productAdd = async (req, res) => {
       name,
       description,
       price,
-      category: categoryExists._id, 
+      category: categoryExists._id,
       stockQuantity,
-      images: req.file ? req.file.buffer : null, 
-
-     
+      images: imageUrl,
     });
 
-
-    res.status(201).send(`Product added successfully: ${product}`);
+    res.status(201).send(`Product added successfully: ${JSON.stringify(product)}`);
   } catch (error) {
     console.error(error.message);
     res.status(500).send('An error occurred while adding the product.');
   }
 };
+
+
+
+
+
+
+
 
 
 const productDelete =  async (req, res) => {
@@ -188,7 +223,6 @@ const productUpdate = async (req, res) => {
 //     res.status(500).send('Error occurred while getting the product ❌');
 //   }
 // };
-
 
 
 
