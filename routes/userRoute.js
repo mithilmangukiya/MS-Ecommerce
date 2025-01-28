@@ -10,7 +10,7 @@ router.post("/signup", signup);
 router.post("/signin", signin);
 
 //get profile
-router.get('/profile', authenticate,getProfile); 
+router.get('/profile/', authenticate,getProfile); 
 
 // Update User Profile 
 router.patch("/profile/:id", authenticate, updateUser);
