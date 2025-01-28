@@ -22,6 +22,9 @@ app.use(
 app.use(cookieParser());
 app.use(express.json());
 
+app.set("view engine","ejs");
+app.use(express.urlencoded({extended:false }))
+
 app.use('/api/user', userRoutes);
 app.use('/api/role', roleRoutes);
 app.use('/api/auth', passwordRoutes);
