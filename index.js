@@ -2,36 +2,26 @@ const express = require("express");
 const dotenv = require("dotenv");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
-const connectionDb=require("./db/MongoDB")
-const categoryRoutes = require("./routes/Category_Routes") 
+const connectMongoDB = require("./db/MongoDB");
+const categoryRoutes = require("./routes/Category_Routes");
 
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-app.use(
-  cors({
-    origin: [process.env.ORIGIN],
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
-    credentials: true,
-  })
-);
+// Middleware
+app.use(cors({ origin: process.env.ORIGIN, credentials: true }));
 app.use(cookieParser());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use("/uploads", express.static("uploads")); // Serve uploaded files
 
+// Routes
+app.use("/api/category", categoryRoutes);
 
-app.use("/api/category", categoryRoutes)
-
-connectionDb()
-  .then(() => {
-    app.listen(PORT, () => {
-      console.log(`Server is running on Port ${PORT}`);
-    });
-  })
-  .catch((error) => {
-    console.log(
-      "Fail to start server  due to connection error : ",
-      error.message
-    );
-    process.exit(1);
+// Connect to MongoDB and start server
+connectMongoDB().then(() => {
+  app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
   });
+});

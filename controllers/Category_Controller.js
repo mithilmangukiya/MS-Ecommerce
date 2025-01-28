@@ -4,22 +4,29 @@ const slugify = require("slugify");
 
 //create a category
 const addCategory=async (req,res)=> {
-    try{
-        const body=req.body;
-        
-        await categoryModel.create({
-            name:body.name,
-            slug: slugify(body.name , { lower: true }),
-            description:body.description,
-            image:body.image,
-        })
-        res.status(201).json({ message: "Category Created Successfully.." });
-    }   
-    catch (error) {
-        console.log(error);
-        res.status(400).json({ message: "error occured.." ,error});
+    try {
+        const { name, description } = req.body;
+    
+        let image = null;
+        if (req.file) {
+          image = `categories/${req.file.filename}`;
+        }
+    
+        const newCategory = new categoryModel({
+          name,
+          slug: slugify(name, { lower: true }),
+          description,
+          image,
+        });
+    
+        await newCategory.save();
+        res.status(201).json({ message: "Category created successfully.", newCategory });
+      } catch (error) {
+        console.error("Error while creating category:", error);
+        res.status(500).json({ message: "Error creating category.", error });
       }
-}
+    };
+
 
 
 //get all Category
@@ -65,24 +72,30 @@ const getCategoryById=async (req,res) =>{
 
 //update Category by id
 const updateCategory=async (req,res)=> {
-    try{
-        const {id}=req.params;
-        // if (!ObjectId.isValid(id)) {
-        //     return res.status(400).json({ message: "Invalid category ID format" });
-        // }
-        const updatedCategory =await categoryModel.findByIdAndUpdate(id, req.body, {new: true});
-        const cleanUpdatedCategory=JSON.parse(JSON.stringify(updatedCategory,(key,value)=>{
-            if (key === 'client' || key === 'sessionPool') {
-                return undefined; 
-            }
-            return value;
-        }))
-        res.status(200).json(cleanUpdatedCategory);
-
-    }
-    catch (error) {
-        console.log(error);
-        res.status(400).json({ message: "error while updating Category.." });
+    try {
+        const { id } = req.params;
+        const { name, description } = req.body;
+    
+        // Prepare the update object
+        const updatedData = {
+          ...(name && { name }),
+          ...(description && { description }),
+        };
+    
+        if (req.file) {
+          updatedData.image = `categories/${req.file.filename}`; // If image is provided, update the image field
+        }
+    
+        const category = await categoryModel.findByIdAndUpdate(id, updatedData, { new: true });
+    
+        if (!category) {
+          return res.status(404).json({ message: "Category not found." });
+        }
+    
+        res.status(200).json({ message: "Category updated successfully.", category });
+      } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Error updating category.", error });
       }
 }
 
@@ -90,7 +103,10 @@ const updateCategory=async (req,res)=> {
 //Delete Category By Id
 const deleteCategoryById=async (req, res)=>{
     try {
-      const {id }= req.params;
+      const categoryId= req.params.id;
+      if (!categoryId) {
+        return res.status(400).send('category ID is required ');
+      }
       const deleteCategory =await categoryModel.findByIdAndDelete(id);
       res.status(200).json({ message: "deleted" });
     } catch (error) {
